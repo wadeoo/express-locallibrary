@@ -32,6 +32,6 @@ AuthorSchema
     .virtual('url')
     .get(
         ()=>'/catalog/author/'+this._id
-    )
+    );
 
 module.exports=mongoose.model('Author',AuthorSchema);
