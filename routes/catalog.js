@@ -11,6 +11,7 @@ const bookinstance = require('../models/bookinstance');
 router.get('/',bookController.index);
 router.get('/books',bookController.book_list);
 
+
 router.get('/book/create',bookController.book_create_get);
 router.post('/book/create',bookController.book_create_post);
 router.get('/book/:id/update',bookController.book_update_get);
@@ -60,7 +61,7 @@ router.post('/genre/:id/update',genreController.genre_update_post);
 router.get('/genre/:id/delete',genreController.genre_delete_get);
 router.post('/genre/:id/delete',genreController.genre_delete_post);
 
-router.get('genre/:id',genreController.genre_detail);
+router.get('/genre/:id',genreController.genre_detail);
 
 
 module.exports=router;
