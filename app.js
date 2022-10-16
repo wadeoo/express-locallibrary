@@ -13,11 +13,9 @@ const mongoose=require('mongoose');
 const mongoDB
 ='mongodb+srv://waydah:waydah@cluster0.dofxbpd.mongodb.net/?retryWrites=true&w=majority';
 mongoose.connect(mongoDB,{useNewUrlParser: true, useUnifiedTopology: true});
-
 mongoose.Promise=global.Promise;
 const db=mongoose.connection;
 db.on('error',console.error.bind(console,"MongoDB 连接错误"));
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
