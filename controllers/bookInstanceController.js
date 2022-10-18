@@ -1,5 +1,7 @@
 const BookInstance=require('../models/bookinstance');
 const Book=require('../models/book');
+const async=require('async');
+const e = require('express');
 
 
 exports.book_instance_list=(req,res,next)=>{
@@ -14,8 +16,25 @@ exports.book_instance_list=(req,res,next)=>{
                 });
 };
 
-exports.book_instance_detail=(req,res)=>{
-    res.send('藏书副本详细信息'+req.params.id);
+exports.book_instance_detail=(req,res,next)=>{
+    BookInstance.findById(req.params.id)
+                .populate('book')
+                .exec(
+                    (error,book_instance)=>{
+                        if(error){
+                            return next(error);
+                        }
+                        if(book_instance==null){
+                            var error=new Error('无法找到该副本');
+                            error.status=404;
+                            return next(error);
+                        }
+                        res.render('book_instance_detail',{
+                            title:book_instance.book.title+' 副本',
+                            book_instance:book_instance
+                        });
+                    }
+                );
 };
 
 exports.book_instance_create_get=(req,res)=>{

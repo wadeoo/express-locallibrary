@@ -1,3 +1,4 @@
+const mongoose=require('mongoose');
 var Book=require('../models/book');
 var Author=require('../models/author');
 var Genre=require('../models/genre');
@@ -40,8 +41,32 @@ exports.book_list=(req,res,next)=>{
         });
 };
 
-exports.book_detail=(req,res)=>{
-    res.send('藏书详细信息'+req.params.id);
+exports.book_detail=(req,res,next)=>{
+    async.parallel(
+        {
+            book:(callback)=>{
+                Book.findById(mongoose.Types.ObjectId(req.params.id))
+                    .populate(['author', 'genre'])
+                    .exec(callback);
+            },
+            book_instances:(callback)=>{
+                BookInstance.find({book: mongoose.Types.ObjectId(req.params.id)})
+                            .exec(callback);
+            }
+        },(error,results)=>{
+            if(error){
+                return next(error);
+            }
+            if(results.book==null){
+                var error=new Error('您所请求的藏书不存在');
+                error.status=404;
+                return next(error);
+            }
+            res.render('book_detail',{title:'书名',book:results.book
+        ,book_instances: results.book_instances});
+        }
+    );
+
 };
 
 exports.book_create_get=(req,res)=>{
