@@ -1,11 +1,43 @@
-const Book=require('../models/book');
+var Book=require('../models/book');
+var Author=require('../models/author');
+var Genre=require('../models/genre');
+var BookInstance=require('../models/bookinstance');
+
+var async=require('async');
 
 exports.index=(req,res)=>{
-    res.send('网站首页');
+
+    async.parallel({
+        book_count:(callback)=>{
+            Book.count({},callback);
+        },
+        book_instance_count:(callback)=>{
+            BookInstance.count({},callback);
+        },
+        book_instance_available_count:(callback)=>{
+            BookInstance.count({status: 'Available'},callback);
+        },
+        author_count:(callback)=>{
+            Author.count({},callback);
+        },
+        genre_count:(callback)=>{
+            Genre.count({},callback);
+        }
+    },(err,results)=>{
+        res.render('index',{title: '图书馆主页',error: err, data: results});
+    });
 };
 
-exports.book_list=(req,res)=>{
-    res.send('藏书列表');
+exports.book_list=(req,res,next)=>{
+    Book.find({},'title author')
+        .populate('author')
+        .exec((error,list_books)=>{
+            if(error){
+                return next(error);
+            }
+            res.render('book_list',{title:'藏书列表', book_list: list_books});
+            console.log(list_books[0].author.first_name);
+        });
 };
 
 exports.book_detail=(req,res)=>{

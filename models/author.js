@@ -13,17 +13,17 @@ const AuthorSchema=new Schema(
 
 //虚拟属性
 AuthorSchema
-    .virtual('name')
-    .get(
-        ()=>this.family_name+', '+this.first_name
-    );
+   .virtual('name')
+   .get(
+       function(){ return this.family_name+', '+this.first_name;}
+   );
 
 
 //虚拟属性
 AuthorSchema
     .virtual('lifespan')
     .get(
-        ()=>(this.date_of_death.getYear()-this.date_of_birth.getYear()).toString()
+        function(){return (this.date_of_death.getYear()-this.date_of_birth.getYear()).toString();}
     );
 
 
