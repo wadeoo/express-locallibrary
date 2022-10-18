@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 #[title]
+  h1 #{title}
 
   form(method='POST' action='')
     div.form-group
@@ -13,7 +13,7 @@ block content
       label(for='date_of_birth') 出生日期:
       input#date_of_birth.form-control(type='date' name='date_of_birth' value=(undefined===author ? '' : author.date_of_birth) )
       label(for='date_of_death') 死亡日期:
-      input#date_of_death.form-control(type='date',name='date_of_death' value=(undefined===author ? '' : author.date_of_death) )
+      input#date_of_death.form-control(type='date' name='date_of_death' value=(undefined===author ? '' : author.date_of_death) )
     button.btn.btn-primary(type='submit') 提交
   if errors
     ul

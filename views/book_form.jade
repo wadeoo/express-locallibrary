@@ -1,0 +1,37 @@
+extends layout 
+
+block content   
+    h1 #{title}
+    form(method='POST' action='')
+        div.form-group
+            label(for='title') 书名:
+            input#title.form-control(type='text' name='title' placeholder='书名' required='true' value=(undefined===book ?'':book.tiltle))
+        div.form-group
+            label(for='author') 作者:
+            select#author.form-control(type='select' name='author' placeholder='选择作者' required='true' )
+                each author in authors
+                    if book    
+                        option(value=author._id selected=(author._id.toString()===book.author?'true':'false' )) 
+                            #{author.name}
+                    else 
+                        option(value=author._id)  
+                            #{author.name}
+        div.form-group  
+            label(for='summary') 简介:
+            input#summary.form-control(type='textarea' name='summary' placeholder='简介' required='true' value=(undefined===book?'':book.summary))
+        div.form-group
+            label(for='isbn') ISBN:
+            input#isbn.form-control(type='text' name='isbn' placeholder='ISBN' required='true' value=(undefined===book?'':book.isbn))
+        div.form-group
+            label 书类:
+            div
+                each genre in genres
+                    div(style='display:inline;padding-right:10px;')
+                        input.checkbox-input(type='checkbox' name='genre' id=genre._id value=genre._id checked=genre.checked)
+                        label(for=genre._id) #{genre.name}
+        button.btn.btn-primary(type='submit') 提交
+        
+    if errors 
+        ul 
+            each error in errors
+                li!=err.msg
