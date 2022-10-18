@@ -1,6 +1,10 @@
-const async=require('async');
 const Author=require('../models/author');
 const Book=require('../models/book');
+
+const async=require('async');
+const {body, validationResult}=require('express-validator');
+const {sanitizeBody}=require('express-validator');
+const e = require('express');
 
 
 exports.author_list=(req,res,next)=>{
@@ -45,12 +49,64 @@ exports.author_detail=(req,res,next)=>{
 };
 
 exports.author_create_get=(req,res)=>{
-    res.send('作者创建表单的 get');
+    res.render('author_form',{title:'创建作者'});
 };
 
-exports.author_create_post=(req,res)=>{
-    res.send('作者创建表单的 post');
-};
+exports.author_create_post=[
+    body('first_name').isLength({min:1}).trim().withMessage('名字不能为空!'),
+    body('family_name').isLength({min:1}).trim().withMessage('姓氏不能为空!'),
+    body('date_of_birth').optional({checkFalsy:false}).isISO8601(),
+    body('date_of_birth').optional({checkFalsy:false}).isISO8601(),
+
+
+    //sanitize
+    sanitizeBody('first_name').trim().escape(),
+    sanitizeBody('family_name').trim().escape(),
+    sanitizeBody('date_of_birth').toDate(),
+    sanitizeBody('date_of_death').toDate(),
+
+
+    (req,res,next)=>{
+        const errors=validationResult(req);
+
+        const author=new Author({
+            first_name:req.body.first_name,
+            family_name:req.body.family_name,
+            date_of_birth:req.body.date_of_birth,
+            date_of_death:req.body.date_of_death
+        });
+
+        if(!errors.isEmpty()){
+            res.render('author_form',{title:'创建作者',author:author, errors:errors.array()});
+            return;
+        }else{
+            Author.findOne({'first_name':author.first_name,
+                            'family_name':author.family_name,
+                            'date_of_birth':author.date_of_birth,
+                            'date_of_death':author.date_of_death})
+                    .exec((error,found_author)=>{
+                        if(error){
+                            return next(error);
+                        }
+                        if(found_author){
+                            res.redirect(found_author.url);
+                            console.log('该作者已存在');
+                        }else{
+                            author.save((error)=>{
+                                if(error){
+                                    return next(error);
+                                }
+                                res.redirect(author.url);
+                            });
+                        }
+                    });
+        }
+        
+    }
+
+
+    
+];
 
 exports.author_delete_get=(req,res)=>{
     res.send('作者删除 post');

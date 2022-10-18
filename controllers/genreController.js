@@ -51,13 +51,13 @@ exports.genre_detail=(req,res,next)=>{
     );
 };
 
-exports.genre_create_get=(req,res,next)=>{
+exports.genre_create_get=(req,res)=>{
     res.render('genre_form',{title:'创建书类'});
 };
 
 exports.genre_create_post=[
     //验证名字属性非空
-    body('name','Genre name required').isLength({min:1}).trim(),
+    body('name','输入不能为空!').isLength({min:1}).trim(),
 
     //清洁名字属性
     sanitizeBody('name').trim().escape(),
@@ -96,7 +96,7 @@ exports.genre_create_post=[
         }
 
     }
-]
+];
 
 
 
